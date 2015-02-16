@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
-<core name="list" version="0.1.0">
-  <core name="logger" required_version="0.1.0"/>
-  <core name="conditional" required_version="0.1.0"/>
+<core name="list" branch="master">
+  <core name="logger" required_branch="master"/>
+  <core name="conditional" required_branch="master"/>
 
   <function name="new"/>
   <function name="exists"/>
