@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<core name="list" version="0.1.0">
+  <core name="logger" required_version="0.1.0"/>
+  <core name="conditional" required_version="0.1.0"/>
+
+  <function name="new"/>
+  <function name="exists"/>
+  <function name="empty"/>
+  <function name="append"/>
+  <function name="get"/>
+  <function name="delete"/>
+  <function name="foreach"/>
+  <function name="print"/>
+</core>

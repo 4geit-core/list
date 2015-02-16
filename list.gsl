@@ -1,0 +1,128 @@
+.template 0
+
+# list library for GSL includes these functions:
+#
+# * list__new: create a new list
+# * list__exists: check if the passed argument is a list
+# * list__empty: does the list empty ?
+# * list__append: append a new item into the list
+# * list__get: get the i^th item of the list
+# * list__delete: delete the i^th item of the list
+# * list__foreach: apply a callback function to every single
+#   item in the list
+# * list__print: standard output the whole list
+
+function global.list__new
+  return XML.new('list')
+endfunction
+
+function global.list__exists(list)
+  conditional__check_arg_missing('list__exists', 'list', my.list)
+  
+  return name(my.list)?"" = "list"
+endfunction
+
+function global.list__empty(list)
+  conditional__check_arg_missing('list__exists', 'list', my.list)
+  
+  return !defined(my.list->.)
+endfunction
+
+function global.list__append(list, item)
+  conditional__check_arg_missing('list__append', 'list', my.list)
+  conditional__check_arg_missing('list__append', 'item', my.item)
+
+  # log(name(my.item)?"", 'list__append')
+
+  if list__exists(my.item)
+    copy my.item to my.list as list
+  else
+    new my.list.item as i
+      define i. = my.item
+    endnew
+  endif
+endfunction
+
+function global.list__get(list, i)
+  conditional__check_arg_missing('list__get', 'list', my.list)
+  conditional__check_arg_missing('list__get', 'i', my.i)
+
+  for my.list. as ii where item() = my.i+1
+    return ii
+  else
+    error('no item found @ $(my.i:)', 'list__get')
+  endfor
+endfunction
+
+function global.list__delete(list, i)
+  conditional__check_arg_missing('list__delete', 'list', my.list)
+  conditional__check_arg_missing('list__delete', 'i', my.i)
+
+  my.item = list__get(my.list, my.i)
+  delete my.item
+endfunction
+
+function global.list__foreach(list, callback, record)
+  conditional__check_arg_missing('list__foreach', 'list', my.list)
+  conditional__check_arg_missing('list__foreach', 'callback', my.callback)
+  
+  my.record ?= XML.new('record')
+
+  for my.list. as i
+    $(my.callback)(i, my.record)
+  endfor
+
+  return my.record
+endfunction
+
+function print_callback(item, record)
+  conditional__check_arg_missing('print_callback', 'item', my.item)
+  conditional__check_arg_missing('print_callback', 'record', my.record)
+
+  if list__exists(my.item)
+    # log('list', 'print_callback')
+    my.sublist__record = list__foreach(my.item, 'print_callback')
+    copy my.sublist__record to my.record
+  else
+    # log(my.item, 'print_callback')
+    new my.record.field as f
+      define f. = my.item.
+    endnew
+  endif
+endfunction
+
+function recursive_print(record)
+  conditional__check_arg_missing('list__print', 'record', my.record)
+
+  my.s = "["
+  
+  for my.record. as i
+    if name(i)?"" = "record"
+      my.s += recursive_print(i)
+    else
+      my.s += i.
+    endif
+    
+    if !last(i)
+      my.s += ','
+    endif
+  endfor
+
+  my.s += "]"
+  
+  return my.s
+endfunction
+
+function global.list__print(list)
+  conditional__check_arg_missing('list__print', 'list', my.list)
+
+  my.record = list__foreach(my.list, 'print_callback')
+
+  # log(my.record.string(), 'list__print')
+  # log(my.s, 'list__print')
+
+  log(recursive_print(my.record), 'list__print')
+
+endfunction
+
+.endtemplate
