@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<core name="list" branch="master">
+<core name="list" branch="master" description="4i core library handling list container">
   <core name="logger" required_branch="master"/>
   <core name="conditional" required_branch="master"/>
 
